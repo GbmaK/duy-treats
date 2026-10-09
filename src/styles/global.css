@@ -1,0 +1,107 @@
+@import "@fontsource-variable/plus-jakarta-sans";
+@import "@fontsource/poppins/600.css";
+@import "@fontsource/poppins/700.css";
+@import "tailwindcss";
+
+@theme {
+  /* ─── Marca ─── */
+  --color-brand: #e00053;
+  --color-brand-hover: #bd0046;
+  --color-brand-soft: #fde8f0;
+  --color-brand-ink: #c2004a; /* texto sobre brand-soft: contraste AA */
+
+  /* ─── Neutros ─── */
+  --color-surface: #ffffff;
+  --color-surface-muted: #f7f7f8;
+  --color-ink: #171717;
+  --color-ink-muted: #66666d;
+  --color-line: #e8e8ec;
+
+  /* ─── Acentos de categoría (hex verificados contra contraste) ─── */
+  --color-accent-yellow: #ffc400;
+  --color-accent-yellow-soft: #fff4d6;
+  --color-accent-yellow-ink: #8a6100;
+
+  --color-accent-cyan: #00b8d4;
+  --color-accent-cyan-soft: #e0f7fc;
+  --color-accent-cyan-ink: #007084;
+
+  --color-accent-green: #12a84a;
+  --color-accent-green-soft: #e1f5ea;
+  --color-accent-green-ink: #0b6b31;
+
+  --color-accent-purple: #3f3a7a;
+  --color-accent-purple-soft: #ecedf5;
+  --color-accent-purple-ink: #3f3a7a;
+
+  --color-accent-orange: #ff7900;
+  --color-accent-orange-soft: #ffebdb;
+  --color-accent-orange-ink: #a34a00;
+
+  --color-accent-pink: #ff6b81;
+  --color-accent-pink-soft: #ffe9ec;
+  --color-accent-pink-ink: #c73a54;
+
+  /* ─── Estados ─── */
+  --color-success: #167a3f;
+  --color-warning: #9a5b00;
+  --color-danger: #b4233d;
+
+  /* ─── Tipografía ─── */
+  --font-sans: "Plus Jakarta Sans Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --text-display: clamp(2.25rem, 4.5vw + 1rem, 4.25rem);
+  --text-display--line-height: 1.05;
+  --text-display--letter-spacing: -0.02em;
+
+  /* ─── Radios y sombras ─── */
+  --radius-card: 1rem;
+  --radius-pill: 9999px;
+  --shadow-card: 0 1px 2px rgb(23 23 23 / 0.06);
+  --shadow-pop: 0 12px 32px rgb(23 23 23 / 0.14);
+
+  /* ─── Parallax ─── */
+  --parallax-duration: 0.12s;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-surface font-sans text-ink antialiased;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand;
+  }
+
+  ::selection {
+    @apply bg-brand text-white;
+  }
+
+  /* Capas parallax: sólo transform, nunca layout */
+  .parallax-layer {
+    transform: translate3d(0, 0, 0);
+  }
+
+  /* will-change sólo cuando el parallax está activo (evita costo en mobile) */
+  .has-parallax .parallax-layer {
+    will-change: transform;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+
+    .parallax-layer {
+      transform: none !important;
+    }
+  }
+}

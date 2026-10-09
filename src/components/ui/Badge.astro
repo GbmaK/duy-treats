@@ -1,0 +1,37 @@
+---
+
+type Tone = 'nuevo' | 'oferta' | 'mas-vendido' | 'agotado' | 'disponible';
+
+interface Props {
+  tone: Tone;
+  class?: string;
+}
+
+const { tone, class: className } = Astro.props;
+
+const tones: Record<Tone, string> = {
+  nuevo: 'bg-accent-cyan-soft text-accent-cyan-ink',
+  oferta: 'bg-accent-orange-soft text-accent-orange-ink',
+  'mas-vendido': 'bg-brand-soft text-brand-ink',
+  agotado: 'bg-surface-muted text-ink-muted',
+  disponible: 'bg-accent-green-soft text-accent-green-ink',
+};
+
+const labels: Record<Tone, string> = {
+  nuevo: 'Nuevo',
+  oferta: 'Oferta',
+  'mas-vendido': 'Más vendido',
+  agotado: 'Agotado',
+  disponible: 'Disponible',
+};
+
+const classes = [
+  'inline-flex items-center rounded-pill px-2.5 py-1 text-xs font-semibold',
+  tones[tone],
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+---
+
+<span class={classes}>{labels[tone]}</span>

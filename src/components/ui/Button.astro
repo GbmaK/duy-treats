@@ -1,0 +1,51 @@
+---
+
+interface Props {
+  variant?: 'primary' | 'secondary' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
+  href?: string;
+  type?: 'button' | 'submit';
+  class?: string;
+  'aria-label'?: string;
+  'aria-disabled'?: boolean | 'true' | 'false';
+  disabled?: boolean;
+}
+
+const {
+  variant = 'primary',
+  size = 'md',
+  href,
+  type = 'button',
+  class: className,
+  ...rest
+} = Astro.props;
+
+const base =
+  'inline-flex items-center justify-center gap-2 rounded-pill font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60';
+
+const variants: Record<NonNullable<Props['variant']>, string> = {
+  primary: 'bg-brand text-white hover:bg-brand-hover',
+  secondary: 'border border-line bg-surface text-ink hover:bg-surface-muted',
+  ghost: 'text-brand hover:bg-brand-soft',
+};
+
+const sizes: Record<NonNullable<Props['size']>, string> = {
+  sm: 'h-9 px-4 text-sm',
+  md: 'h-11 px-5 text-sm',
+  lg: 'h-12 px-7 text-base',
+};
+
+const classes = [base, variants[variant], sizes[size], className].filter(Boolean).join(' ');
+---
+
+{
+  href ? (
+    <a href={href} class={classes} {...rest}>
+      <slot />
+    </a>
+  ) : (
+    <button type={type} class={classes} {...rest}>
+      <slot />
+    </button>
+  )
+}

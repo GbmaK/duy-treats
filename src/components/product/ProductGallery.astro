@@ -1,0 +1,81 @@
+---
+import type { AccentColor } from '../../types/catalog';
+import { categories } from '../../data/categories';
+import { ACCENT_BAR } from '../../lib/accents';
+import CatPattern from '../ui/CatPattern.astro';
+
+interface Props {
+  productName: string;
+  categorySlug: string;
+  /** Número de miniaturas de la galería. */
+  thumbs?: number;
+}
+
+const { productName, categorySlug, thumbs = 3 } = Astro.props;
+
+const category = categories.find((c) => c.slug === categorySlug);
+const accent: AccentColor = category?.accent ?? 'cyan';
+const thumbIndexes = Array.from({ length: thumbs }, (_, index) => index + 1);
+---
+
+<!--
+  Galería placeholder: mientras no haya fotos reales, cada "vista" es un tile
+  con el patrón de gatos. Al llegar las fotos, reemplazar por <img> con
+  data-thumb y mantener el mismo script de selección.
+-->
+<div class="flex flex-col gap-4" data-gallery>
+  <div
+    id="gallery-main"
+    class="relative aspect-square overflow-hidden rounded-2xl border border-line bg-surface"
+    role="img"
+    aria-label={`Foto principal de ${productName} (pendiente de reemplazar)`}
+  >
+    <div class="absolute inset-0 text-ink/10" aria-hidden="true">
+      <CatPattern id="gallery-cats" />
+    </div>
+    <span class:list={['absolute inset-x-0 top-0 h-1.5', ACCENT_BAR[accent]]} aria-hidden="true" />
+    <span class="absolute inset-0 flex items-center justify-center p-8">
+      <span class="text-center font-display text-sm font-semibold text-ink-muted">
+        {productName}
+      </span>
+    </span>
+  </div>
+
+  <div class="grid grid-cols-3 gap-4" role="group" aria-label="Vistas de la galería">
+    {
+      thumbIndexes.map((index) => (
+        <button
+          type="button"
+          data-thumb={index}
+          aria-pressed={index === 1 ? 'true' : 'false'}
+          class:list={[
+            'relative aspect-square overflow-hidden rounded-xl border bg-surface transition-colors hover:border-brand',
+            index === 1 ? 'border-brand' : 'border-line',
+          ]}
+        >
+          <span class="absolute inset-0 text-ink/10" aria-hidden="true">
+            <CatPattern id={`gallery-thumb-${index}`} />
+          </span>
+          <span class="absolute inset-x-0 top-0 h-1" class:list={[ACCENT_BAR[accent]]} aria-hidden="true" />
+          <span class="absolute inset-0 flex items-center justify-center">
+            <span class="text-xs font-medium text-ink-muted">Vista {index}</span>
+          </span>
+        </button>
+      ))
+    }
+  </div>
+</div>
+
+<script>
+  // Selección visual de miniaturas (no hay fotos reales todavía).
+  document.querySelectorAll<HTMLButtonElement>('[data-thumb]').forEach((thumb) => {
+    thumb.addEventListener('click', () => {
+      document.querySelectorAll<HTMLButtonElement>('[data-thumb]').forEach((other) => {
+        const isActive = other === thumb;
+        other.setAttribute('aria-pressed', String(isActive));
+        other.classList.toggle('border-brand', isActive);
+        other.classList.toggle('border-line', !isActive);
+      });
+    });
+  });
+</script>

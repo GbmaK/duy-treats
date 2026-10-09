@@ -1,0 +1,23 @@
+---
+import type { Product } from '../../types/catalog';
+import ProductGrid from '../product/ProductGrid.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+
+interface Props {
+  products: Product[];
+}
+
+const { products } = Astro.props;
+---
+
+<section id="destacados" class="scroll-mt-20 bg-surface-muted py-16">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Destacados"
+      title="Los favoritos de la tienda"
+      action={{ label: 'Ver todo el catálogo →', href: '/productos' }}
+    />
+
+    <ProductGrid products={products} />
+  </div>
+</section>

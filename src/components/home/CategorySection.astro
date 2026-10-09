@@ -1,0 +1,59 @@
+---
+import type { Category } from '../../types/catalog';
+import { ACCENT_BAR } from '../../lib/accents';
+import { products } from '../../data/products';
+import CatPattern from '../ui/CatPattern.astro';
+
+interface Props {
+  categories: Category[];
+}
+
+const { categories } = Astro.props;
+
+const countByCategory = (slug: string) => products.filter((p) => p.categorySlug === slug).length;
+---
+
+<section id="categorias" class="mx-auto max-w-6xl scroll-mt-20 px-4 py-16 sm:px-6 lg:px-8">
+  <div class="flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <p class="text-sm font-semibold uppercase tracking-wide text-brand">Categorías</p>
+      <h2 class="mt-1 font-display text-2xl font-bold text-ink sm:text-3xl">
+        Encuentra su próximo favorito
+      </h2>
+    </div>
+    <a href="/categorias" class="text-sm font-semibold text-brand hover:text-brand-hover hover:underline">
+      Ver todas →
+    </a>
+  </div>
+
+  <ul class="mt-8 grid grid-cols-2 gap-4 last:col-span-2 sm:last:col-span-1 md:grid-cols-3 lg:grid-cols-5">
+    {
+      categories.map((category) => (
+        <li>
+          <a
+            href={`/categorias/${category.slug}`}
+            class="group flex h-full flex-col overflow-hidden rounded-card border border-line bg-surface shadow-card transition-shadow hover:shadow-pop"
+          >
+            <div class="relative aspect-[4/3] overflow-hidden">
+              <!-- Eco de los tiles de Instagram: patrón de gatos + franja de acento -->
+              <!-- El patrón se mueve con parallax suave; el contenido de la tarjeta queda fijo -->
+              <div class="parallax-layer absolute -inset-y-16 inset-x-0" data-parallax="0.05">
+                <div class="absolute inset-0 text-ink/10 transition-transform duration-300 group-hover:scale-105">
+                  <CatPattern id={`cats-${category.slug}`} />
+                </div>
+              </div>
+              <span class:list={['absolute inset-x-0 top-0 h-1.5', ACCENT_BAR[category.accent]]} aria-hidden="true" />
+            </div>
+            <div class="flex flex-1 flex-col p-4">
+              <h3 class="font-display text-base font-bold text-ink">{category.name}</h3>
+              <p class="mt-1 text-sm leading-snug text-ink-muted">{category.description}</p>
+              <p class="mt-auto pt-3 text-xs font-medium text-ink-muted">
+                {countByCategory(category.slug)} productos
+              </p>
+            </div>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</section>

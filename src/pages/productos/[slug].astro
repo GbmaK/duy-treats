@@ -1,0 +1,174 @@
+---
+import StoreLayout from '../../layouts/StoreLayout.astro';
+import ProductGallery from '../../components/product/ProductGallery.astro';
+import ProductGrid from '../../components/product/ProductGrid.astro';
+import Badge from '../../components/ui/Badge.astro';
+import ProductPurchase from '../../islands/ProductPurchase';
+import { products, getProduct } from '../../data/products';
+import { getCategory } from '../../data/categories';
+import { formatPrice, discountPercent } from '../../lib/format';
+
+export function getStaticPaths() {
+  return products.map((product) => ({ params: { slug: product.slug } }));
+}
+
+const { slug } = Astro.params;
+const product = getProduct(slug);
+
+if (!product) {
+  return Astro.redirect('/404');
+}
+
+const category = getCategory(product.categorySlug);
+const discount = discountPercent(product.price, product.compareAtPrice);
+const soldOut = product.availability === 'out-of-stock';
+const related = products
+  .filter((item) => item.categorySlug === product.categorySlug && item.id !== product.id)
+  .slice(0, 4);
+---
+
+<StoreLayout title={product.name} description={product.description}>
+  <div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+    <nav aria-label="Ruta de navegación" class="text-sm text-ink-muted">
+      <ol class="flex flex-wrap items-center gap-1.5">
+        <li><a href="/" class="hover:text-brand">Inicio</a></li>
+        <li aria-hidden="true">/</li>
+        {
+          category && (
+            <>
+              <li>
+                <a href={`/categorias/${category.slug}`} class="hover:text-brand">
+                  {category.name}
+                </a>
+              </li>
+              <li aria-hidden="true">/</li>
+            </>
+          )
+        }
+        <li class="font-medium text-ink">{product.name}</li>
+      </ol>
+    </nav>
+
+    <div class="mt-6 grid gap-10 lg:grid-cols-2 lg:gap-16">
+      <!-- Galería -->
+      <ProductGallery
+        productName={product.name}
+        categorySlug={product.categorySlug}
+      />
+
+      <!-- Información de compra -->
+      <div>
+        <div class="flex flex-wrap items-center gap-2">
+          {
+            product.tags.map((tag) => (
+              <Badge tone={tag} />
+            ))
+          }
+          {soldOut ? <Badge tone="agotado" /> : <Badge tone="disponible" />}
+        </div>
+
+        <h1 class="mt-4 font-display text-3xl font-bold leading-tight text-ink sm:text-4xl">
+          {product.name}
+        </h1>
+
+        <p class="mt-2 text-sm text-ink-muted">
+          {product.brand && <span>{product.brand}</span>}
+          {product.brand && category && <span aria-hidden="true"> · </span>}
+          {category && <a href={`/categorias/${category.slug}`} class="hover:text-brand">{category.name}</a>}
+        </p>
+
+        <div class="mt-6 flex items-baseline gap-3">
+          <span class="font-display text-3xl font-bold text-ink">
+            {formatPrice(product.price)}
+          </span>
+          {
+            product.compareAtPrice && (
+              <>
+                <span class="text-lg text-ink-muted line-through">
+                  {formatPrice(product.compareAtPrice)}
+                </span>
+                {discount && (
+                  <span class="rounded-pill bg-accent-orange-soft px-2.5 py-1 text-sm font-bold text-accent-orange-ink">
+                    −{discount}%
+                  </span>
+                )}
+              </>
+            )
+          }
+        </div>
+
+        <p class="mt-6 max-w-prose text-base leading-relaxed text-ink-muted">
+          {product.description}
+        </p>
+
+        <!-- Selector de formato, cantidad y CTA (isla React) -->
+        <div class="mt-8">
+          <ProductPurchase
+            productId={product.id}
+            name={product.name}
+            variants={product.variants}
+            defaultVariant={product.variantLabel}
+            disabled={soldOut}
+            client:load
+          />
+        </div>
+
+        <!-- Nota de entrega: sólo información confirmada -->
+        <div class="mt-8 rounded-card border border-line bg-surface-muted p-4 text-sm text-ink-muted">
+          <p class="font-semibold text-ink">Entrega y retiro</p>
+          <p class="mt-1 leading-relaxed">
+            Zonas de reparto, costos y horarios por confirmar con la tienda. Hoy la
+            atención se coordina principalmente por Instagram.
+          </p>
+        </div>
+
+        <!-- Detalles -->
+        <dl class="mt-8 divide-y divide-line border-t border-line text-sm">
+          {
+            product.brand && (
+              <div class="flex justify-between py-3">
+                <dt class="text-ink-muted">Marca</dt>
+                <dd class="font-medium text-ink">{product.brand}</dd>
+              </div>
+            )
+          }
+          {
+            category && (
+              <div class="flex justify-between py-3">
+                <dt class="text-ink-muted">Categoría</dt>
+                <dd class="font-medium text-ink">{category.name}</dd>
+              </div>
+            )
+          }
+          {
+            product.variantLabel && (
+              <div class="flex justify-between py-3">
+                <dt class="text-ink-muted">Formato</dt>
+                <dd class="font-medium text-ink">{product.variantLabel}</dd>
+              </div>
+            )
+          }
+        </dl>
+      </div>
+    </div>
+
+    {
+      related.length > 0 && (
+        <section class="mt-16 border-t border-line pt-10">
+          <div class="flex flex-wrap items-end justify-between gap-4">
+            <h2 class="font-display text-2xl font-bold text-ink">Productos relacionados</h2>
+            {category && (
+              <a
+                href={`/categorias/${category.slug}`}
+                class="text-sm font-semibold text-brand hover:text-brand-hover hover:underline"
+              >
+                Ver {category.name} →
+              </a>
+            )}
+          </div>
+          <ProductGrid products={related} />
+        </section>
+      )
+    }
+  </div>
+</StoreLayout>

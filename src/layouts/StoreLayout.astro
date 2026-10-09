@@ -1,0 +1,62 @@
+---
+
+import '../styles/global.css';
+import AnnouncementBar from '../components/layout/AnnouncementBar.astro';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import CartIsland from '../islands/CartIsland';
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? 'http://localhost:4321');
+---
+
+<!doctype html>
+<html lang="es-CL">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} · Duy Treats</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href={canonical} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={`${title} · Duy Treats`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:locale" content="es_CL" />
+    <meta name="twitter:card" content="summary" />
+    <!-- TODO: og:image / twitter:image cuando existan las fotos reales de producto -->
+  </head>
+  <body class="flex min-h-screen flex-col">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-pill focus:bg-brand focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white"
+    >
+      Saltar al contenido
+    </a>
+
+    <AnnouncementBar />
+    <Header />
+    <main id="main" class="flex-1">
+      <slot />
+    </main>
+    <Footer />
+
+    <!-- Isla global: drawer del carrito + toasts de feedback -->
+    <CartIsland client:load />
+
+    <!-- Sistema de parallax (no-op en mobile / reduced-motion) -->
+    <script>
+      import { initParallax } from '../scripts/parallax';
+
+      initParallax();
+      // Re-escanea tras navegaciones con view transitions.
+      document.addEventListener('astro:page-load', initParallax);
+    </script>
+  </body>
+</html>

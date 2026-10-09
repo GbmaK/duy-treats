@@ -1,0 +1,17 @@
+---
+import CatPattern from '../ui/CatPattern.astro';
+---
+
+<!--
+  Banda divisoria diagonal: da ritmo e identidad entre secciones sin competir
+  con el contenido. Es decorativa pura (aria-hidden).
+-->
+<section class="relative h-20 overflow-hidden md:h-28" aria-hidden="true">
+  <div
+    class="absolute -inset-x-[8%] top-1/2 h-12 -translate-y-1/2 rotate-[-2deg] overflow-hidden bg-surface-muted md:h-16"
+  >
+    <div class="parallax-layer absolute -inset-y-48 inset-x-0" data-parallax="0.15">
+      <CatPattern id="band-cats" class="text-ink/[0.08]" />
+    </div>
+  </div>
+</section>

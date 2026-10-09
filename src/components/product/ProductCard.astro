@@ -1,0 +1,109 @@
+---
+import type { Product, AccentColor } from '../../types/catalog';
+import { categories } from '../../data/categories';
+import { ACCENT_BAR } from '../../lib/accents';
+import { formatPrice, discountPercent } from '../../lib/format';
+import Badge from '../ui/Badge.astro';
+import CatPattern from '../ui/CatPattern.astro';
+import AddToCartButton from '../../islands/AddToCartButton';
+
+interface Props {
+  product: Product;
+}
+
+const { product } = Astro.props;
+
+const category = categories.find((c) => c.slug === product.categorySlug);
+const accent: AccentColor = category?.accent ?? 'cyan';
+const discount = discountPercent(product.price, product.compareAtPrice);
+const primaryTag = product.tags[0];
+const soldOut = product.availability === 'out-of-stock';
+---
+
+<article class="group flex h-full flex-col overflow-hidden rounded-card border border-line bg-surface shadow-card transition-shadow hover:shadow-pop">
+  <a
+    href={`/productos/${product.slug}`}
+    class="block"
+    tabindex={-1}
+    aria-hidden="true"
+  >
+    <div class="relative aspect-[4/5] overflow-hidden">
+      <!-- Fondo: patrón de gatos de la marca (parallax suave, contenido fijo) -->
+      <div class="parallax-layer absolute -inset-y-16 inset-x-0" data-parallax="0.05">
+        <div class="absolute inset-0 text-ink/10">
+          <CatPattern id={`tile-${product.id}`} />
+        </div>
+      </div>
+
+      <!-- Franja de color por categoría, como los tiles de Instagram -->
+      <span
+        class:list={['absolute inset-x-0 top-0 h-1.5', ACCENT_BAR[accent]]}
+        aria-hidden="true"
+      />
+
+      {
+        product.image && (
+          <img
+            src={product.image}
+            alt={product.name}
+            loading="lazy"
+            decoding="async"
+            class="absolute inset-0 h-full w-full object-contain p-4"
+          />
+        )
+      }
+
+      <!-- Badges -->
+      <div class="absolute left-3 top-4 flex flex-col items-start gap-1.5">
+        {primaryTag && <Badge tone={primaryTag} />}
+        {soldOut && <Badge tone="agotado" />}
+      </div>
+
+      {discount && (
+        <span class="absolute right-3 top-4 rounded-pill bg-accent-orange px-2 py-1 text-xs font-bold text-white">
+          −{discount}%
+        </span>
+      )}
+    </div>
+  </a>
+
+  <div class="flex flex-1 flex-col p-4">
+    {
+      product.brand && (
+        <p class="text-xs font-medium uppercase tracking-wide text-ink-muted">{product.brand}</p>
+      )
+    }
+    <h3 class="mt-1 font-display text-sm font-bold leading-snug text-ink sm:text-base">
+      <a href={`/productos/${product.slug}`} class="hover:text-brand">
+        {product.name}
+      </a>
+    </h3>
+    {
+      product.variantLabel && (
+        <p class="mt-1 text-xs text-ink-muted">{product.variantLabel}</p>
+      )
+    }
+
+    <div class="mt-auto pt-3">
+      <div class="flex items-baseline gap-2">
+        <span class="font-display text-lg font-bold text-ink">{formatPrice(product.price)}</span>
+        {
+          product.compareAtPrice && (
+            <span class="text-sm text-ink-muted line-through">
+              {formatPrice(product.compareAtPrice)}
+            </span>
+          )
+        }
+      </div>
+      <div class="mt-3">
+        <AddToCartButton
+          productId={product.id}
+          name={product.name}
+          disabled={soldOut}
+          fullWidth
+          client:load
+        />
+      </div>
+    </div>
+  </div>
+</article>

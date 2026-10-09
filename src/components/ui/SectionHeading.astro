@@ -1,0 +1,32 @@
+---
+
+interface Props {
+  title: string;
+  eyebrow?: string;
+  action?: { label: string; href: string };
+  class?: string;
+}
+
+const { title, eyebrow, action, class: className } = Astro.props;
+---
+
+<div class:list={['flex flex-wrap items-end justify-between gap-4', className]}>
+  <div>
+    {
+      eyebrow && (
+        <p class="text-sm font-semibold uppercase tracking-wide text-brand">{eyebrow}</p>
+      )
+    }
+    <h2 class="mt-1 font-display text-2xl font-bold text-ink sm:text-3xl">{title}</h2>
+  </div>
+  {
+    action && (
+      <a
+        href={action.href}
+        class="text-sm font-semibold text-brand hover:text-brand-hover hover:underline"
+      >
+        {action.label} →
+      </a>
+    )
+  }
+</div>

@@ -1,0 +1,54 @@
+---
+import StoreLayout from '../layouts/StoreLayout.astro';
+import type { AccentColor } from '../types/catalog';
+import { categories } from '../data/categories';
+import { ACCENT_BAR, ACCENT_CHIP } from '../lib/accents';
+
+const countByCategory = (slug: string) =>
+  categories.filter((c) => c.slug === slug).length;
+---
+
+<StoreLayout
+  title="Categorías"
+  description="Explora las categorías de Duy Treats: Churu Cat, Churu Dog, MEGA Churu, arena aglutinante y toallitas húmedas."
+>
+  <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+    <header class="max-w-2xl">
+      <p class="text-sm font-semibold uppercase tracking-wide text-brand">Catálogo</p>
+      <h1 class="mt-1 font-display text-3xl font-bold text-ink sm:text-4xl">Categorías</h1>
+      <p class="mt-3 text-base leading-relaxed text-ink-muted">
+        Todo lo que necesita tu michi, organizado por tipo de producto.
+      </p>
+    </header>
+
+    <ul class="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {
+        categories.map((category) => (
+          <li>
+            <a
+              href={`/categorias/${category.slug}`}
+              class="flex h-full flex-col rounded-card border border-line bg-surface p-6 shadow-card transition-shadow hover:shadow-pop"
+            >
+              <span
+                class:list={[
+                  'inline-flex w-fit items-center rounded-pill px-2.5 py-1 text-xs font-semibold',
+                  ACCENT_CHIP[category.accent as AccentColor],
+                ]}
+              >
+                {category.name}
+              </span>
+              <h2 class="mt-4 font-display text-lg font-bold text-ink">
+                {category.name}
+              </h2>
+              <p class="mt-2 text-sm leading-relaxed text-ink-muted">{category.description}</p>
+              <p class="mt-auto pt-4 text-xs font-medium text-ink-muted">
+                {countByCategory(category.slug)} productos →
+              </p>
+              <span class:list={['mt-4 h-1.5 w-16 rounded-pill', ACCENT_BAR[category.accent]]} aria-hidden="true" />
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</StoreLayout>

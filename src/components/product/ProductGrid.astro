@@ -1,0 +1,20 @@
+---
+import type { Product } from '../../types/catalog';
+import ProductCard from '../product/ProductCard.astro';
+
+interface Props {
+  products: Product[];
+}
+
+const { products } = Astro.props;
+---
+
+<ul class="mt-8 grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
+  {
+    products.map((product) => (
+      <li>
+        <ProductCard product={product} />
+      </li>
+    ))
+  }
+</ul>

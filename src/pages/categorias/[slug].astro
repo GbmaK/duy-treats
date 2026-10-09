@@ -1,0 +1,43 @@
+---
+import StoreLayout from '../../layouts/StoreLayout.astro';
+import ProductGrid from '../../components/product/ProductGrid.astro';
+import { categories, getCategory } from '../../data/categories';
+import { productsByCategory } from '../../data/products';
+
+export function getStaticPaths() {
+  return categories.map((category) => ({
+    params: { slug: category.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const category = getCategory(slug);
+
+if (!category) {
+  return Astro.redirect('/404');
+}
+
+const categoryProducts = productsByCategory(category.slug);
+---
+
+<StoreLayout title={category.name} description={category.description}>
+  <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+    <nav aria-label="Ruta de navegación" class="text-sm text-ink-muted">
+      <ol class="flex flex-wrap items-center gap-1.5">
+        <li><a href="/" class="hover:text-brand">Inicio</a></li>
+        <li aria-hidden="true">/</li>
+        <li><a href="/categorias" class="hover:text-brand">Categorías</a></li>
+        <li aria-hidden="true">/</li>
+        <li class="font-medium text-ink">{category.name}</li>
+      </ol>
+    </nav>
+
+    <header class="mt-6 max-w-2xl">
+      <h1 class="font-display text-3xl font-bold text-ink sm:text-4xl">{category.name}</h1>
+      <p class="mt-3 text-base leading-relaxed text-ink-muted">{category.description}</p>
+      <p class="mt-2 text-sm text-ink-muted">{categoryProducts.length} productos</p>
+    </header>
+
+    <ProductGrid products={categoryProducts} />
+  </div>
+</StoreLayout>

@@ -1,0 +1,102 @@
+---
+import { categories } from '../../data/categories';
+import CatPattern from '../ui/CatPattern.astro';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="relative mt-16 overflow-hidden border-t border-line bg-surface-muted">
+  <!-- Patrón de gatos visible pero discreto, con deriva parallax lenta -->
+  <div class="pointer-events-none absolute inset-0 text-ink/5" aria-hidden="true">
+    <div class="parallax-layer absolute -inset-y-20 inset-x-0" data-parallax="0.06">
+      <CatPattern id="footer-cats" />
+    </div>
+  </div>
+
+  <div id="contacto" class="relative mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+    <div class="grid gap-10 md:grid-cols-4">
+      <!-- Marca -->
+      <div class="md:col-span-1">
+        <div class="flex items-center gap-2.5">
+          <svg viewBox="0 0 48 48" class="h-10 w-10" aria-hidden="true">
+            <circle cx="24" cy="24" r="24" fill="var(--color-brand)" />
+            <text
+              x="24"
+              y="31"
+              text-anchor="middle"
+              font-family="Poppins, ui-sans-serif, system-ui, sans-serif"
+              font-weight="700"
+              font-size="19"
+              fill="#ffffff">DT</text
+            >
+          </svg>
+          <span class="font-display text-lg font-bold text-ink">Duy Treats</span>
+        </div>
+        <p class="mt-4 max-w-xs text-sm leading-relaxed text-ink-muted">
+          Insumos para mascotas con alma felina: snacks, arena y cuidados para consentir a tu michi.
+        </p>
+        <a
+          href="https://www.instagram.com/duytreats/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-brand hover:text-brand-hover"
+        >
+          <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="5" />
+            <circle cx="12" cy="12" r="4" />
+            <circle cx="17.2" cy="6.8" r="1.2" fill="currentColor" stroke="none" />
+          </svg>
+          @duytreats
+        </a>
+      </div>
+
+      <!-- Tienda -->
+      <nav aria-label="Tienda">
+        <h2 class="font-display text-sm font-bold uppercase tracking-wide text-ink">Tienda</h2>
+        <ul class="mt-4 space-y-2.5 text-sm">
+          <li><a href="/productos" class="text-ink-muted hover:text-brand">Todos los productos</a></li>
+          <li><a href="/categorias" class="text-ink-muted hover:text-brand">Categorías</a></li>
+          <li><a href="/#destacados" class="text-ink-muted hover:text-brand">Destacados</a></li>
+          <li><a href="/#promo" class="text-ink-muted hover:text-brand">Ofertas</a></li>
+        </ul>
+      </nav>
+
+      <!-- Categorías -->
+      <nav aria-label="Categorías">
+        <h2 class="font-display text-sm font-bold uppercase tracking-wide text-ink">Categorías</h2>
+        <ul class="mt-4 space-y-2.5 text-sm">
+          {
+            categories.map((category) => (
+              <li>
+                <a href={`/categorias/${category.slug}`} class="text-ink-muted hover:text-brand">
+                  {category.name}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <!-- Contacto -->
+      <div>
+        <h2 class="font-display text-sm font-bold uppercase tracking-wide text-ink">Contacto</h2>
+        <ul class="mt-4 space-y-2.5 text-sm text-ink-muted">
+          <li>Puerto Montt, Región de Los Lagos</li>
+          <li>
+            <!-- TODO: confirmar canal de contacto oficial (WhatsApp/teléfono/correo) -->
+            Atención principalmente por Instagram
+          </li>
+          <li>
+            <!-- TODO: confirmar zonas, horarios y costos de reparto/retiro -->
+            Retiro y reparto por confirmar
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-10 flex flex-col gap-3 border-t border-line pt-6 text-xs text-ink-muted sm:flex-row sm:items-center sm:justify-between">
+      <p>© {year} Duy Treats. Todos los derechos reservados.</p>
+      <p>Sitio en desarrollo: precios, promociones y políticas por confirmar con la tienda.</p>
+    </div>
+  </div>
+</footer>

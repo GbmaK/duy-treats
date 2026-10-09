@@ -1,0 +1,27 @@
+---
+import StoreLayout from '../layouts/StoreLayout.astro';
+import Hero from '../components/home/Hero.astro';
+import CategorySection from '../components/home/CategorySection.astro';
+import FeaturedProducts from '../components/home/FeaturedProducts.astro';
+import PromoBanner from '../components/home/PromoBanner.astro';
+import DividerBand from '../components/home/DividerBand.astro';
+import Benefits from '../components/home/Benefits.astro';
+import InstagramSection from '../components/home/InstagramSection.astro';
+import { categories } from '../data/categories';
+import { products } from '../data/products';
+
+const featured = products.slice(0, 4);
+---
+
+<StoreLayout
+  title="Inicio"
+  description="Duy Treats: insumos para mascotas en Puerto Montt. Churu, arena aglutinante y toallitas para consentir a tu gato."
+>
+  <Hero />
+  <CategorySection categories={categories} />
+  <DividerBand />
+  <FeaturedProducts products={featured} />
+  <PromoBanner />
+  <Benefits />
+  <InstagramSection />
+</StoreLayout>
